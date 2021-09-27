@@ -17,11 +17,14 @@ import java.util.UUID;
 
 import static java.util.Arrays.*;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 @AutoConfigureJsonTesters
 @SpringBootTest
@@ -49,8 +52,11 @@ public class UserControllerTest {
         // invoke and test
        mockMvc.perform(
                         get("/api/users")
+                                .with(csrf())
+                                .with(user("John"))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk())
+
                 .andExpect(content().json("[{'id':'f5f94b21-0783-4f4b-b309-f6ea3325db46'," +
                         "'userName':'John', 'preferredPhoneNumber':'+353812345', " +
                         "'emailAddress':'abc@test.com', 'password':'test123'}]"));
